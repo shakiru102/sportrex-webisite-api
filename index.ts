@@ -9,7 +9,8 @@ env.config()
 const app = express()
 
 app.use(cors({
-    origin: "*"
+    origin: "*",
+    credentials: true
 }))
 
 app.use(express.json())
