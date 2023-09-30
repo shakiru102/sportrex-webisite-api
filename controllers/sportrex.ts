@@ -4,6 +4,7 @@ import { WaitlistProps } from "../types";
 import Waitlist from "../models/Waitlist";
 import { nanoid } from "nanoid";
 import Airdrop from "../models/Airdrop";
+import Sportrex from "../models/Sportrex";
 
 export const createUserWaitlist = async (req: Request, res: Response) => {
     try {
@@ -75,3 +76,30 @@ export const createUserAirdrop = async (req: Request, res: Response) => {
     })
   }
 }
+
+export const subscribedSportrexEmail = async (req: Request, res: Response) => {
+    try {
+      
+      const { error } = airdropValidation(req.body)
+      if(error) return res.status(400).json({
+          success: false,
+          error: error.details[0].message
+      })
+      const isAddress = await Sportrex.findOne({ address: req.body.address})
+      if(isAddress) return res.status(400).json({ success: false, error: "wallet address already exist" })
+  
+      const airdrop = await Sportrex.create({ address: req.body.address})
+      if(!airdrop) return res.status(400).json({ success: false, error: "Could not create airdrop" })
+  
+      res.status(200).json({ 
+          success: true,
+          message: "you have successfully subcribed to the news letter",
+          airdrop
+      })
+    } catch (error: any) {
+      res.status(500).json({
+          success: false,
+          error: error.message
+      })
+    }
+  }
